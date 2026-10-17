@@ -1,0 +1,56 @@
+{% extends "layout.html" %}
+{% block title %}Postlarım - MicroBlog{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <h4 class="mb-4"><i class="bi bi-person"></i> Postlarım</h4>
+        
+        {% for post in posts %}
+        <div class="card mb-3 shadow-sm">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <strong>{{ post.DisplayName }}</strong>
+                        <span class="text-muted">@{{ post.Username }}</span>
+                    </div>
+                    <div>
+                        <small class="text-muted me-3">
+                            <i class="bi bi-clock"></i> {{ post.CreatedAt.strftime('%d/%m/%Y %H:%M') if post.CreatedAt else '' }}
+                        </small>
+                        <form action="{{ url_for('delete_post', post_id=post.PostId) }}" method="POST" class="d-inline"
+                              onsubmit="return confirm('Bu postu silmek istediğine emin misin?')">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                <p class="mt-2 mb-2">{{ post.Content }}</p>
+                
+                <!-- Post Fotoğrafı (varsa) -->
+                {% if post.ImageUrl %}
+                <div class="mb-2">
+                    <img src="{{ post.ImageUrl }}" class="img-fluid rounded" alt="Post image" style="max-height: 300px; width: 100%; object-fit: cover;">
+                </div>
+                {% endif %}
+                
+                <div class="text-muted small">
+                    <span class="me-3"><i class="bi bi-chat"></i> {{ post.CommentCount if post.CommentCount else 0 }} yorum</span>
+                    <span><i class="bi bi-heart"></i> {{ post.LikeCount if post.LikeCount else 0 }} beğeni</span>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="text-center py-5 text-muted">
+            <i class="bi bi-inbox" style="font-size: 4rem;"></i>
+            <p class="mt-3">Henüz post paylaşmadın.</p>
+            <a href="{{ url_for('feed') }}" class="btn btn-primary">
+                <i class="bi bi-plus"></i> İlk Postunu Paylaş
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

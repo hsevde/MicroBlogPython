@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+
+# Ortam değişkenleri
+.env
+
+# Kullanıcı yüklemeleri
+static/uploads/*
+!static/uploads/.gitkeep
+
+# Editör / işletim sistemi
+.vscode/
+.idea/
+*.code-workspace
+Thumbs.db
+.DS_Store
+
+# Ders teslim dosyaları (repoya ait değil)
+HOCAYA_SUNUM_OZET.*
+HIZLI_BASLANGIC.md
+convert_to_word.py
+
+# Eski proje kopyası
+MicroBlogPython/

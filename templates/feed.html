@@ -1,0 +1,118 @@
+{% extends "layout.html" %}
+{% block title %}Ana Sayfa - MicroBlog{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <!-- Ana Kolon - Yeni Post -->
+    <div class="col-lg-7 col-xl-6">
+        <!-- Yeni Post Formu -->
+        <div class="card mb-4 shadow-sm">
+            <div class="card-body">
+                <form action="{{ url_for('new_post') }}" method="POST" enctype="multipart/form-data">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <div class="d-flex">
+                        <div class="flex-shrink-0">
+                            <div class="avatar bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                                <span class="fw-bold">{{ session.get('display_name')[0] if session.get('display_name') else 'U' }}</span>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <textarea name="content" class="form-control border-0 shadow-none" rows="3" 
+                                placeholder="Ne düşünüyorsun?" required style="resize: none;"></textarea>
+                            
+                            <!-- Fotoğraf Önizleme Alanı -->
+                            <div id="imagePreview" class="mt-2" style="display: none;">
+                                <img id="previewImg" src="" class="img-fluid rounded" style="max-height: 200px;">
+                                <button type="button" class="btn btn-sm btn-danger mt-1" id="removeImage">
+                                    <i class="bi bi-x"></i> Kaldır
+                                </button>
+                            </div>
+                            
+                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                <div>
+                                    <label for="imageInput" class="btn btn-sm btn-light" style="cursor: pointer;">
+                                        <i class="bi bi-image text-primary"></i> Fotoğraf Ekle
+                                    </label>
+                                    <input type="file" name="image" id="imageInput" accept="image/*" style="display: none;">
+                                </div>
+                                <button type="submit" class="btn btn-primary px-4">
+                                    <i class="bi bi-send me-1"></i> Paylaş
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Postlar -->
+        {% for post in posts %}
+        <div class="card mb-3 shadow-sm post-card">
+            <div class="card-body p-3">
+                <div class="d-flex">
+                    <div class="flex-shrink-0">
+                        <div class="avatar bg-gradient text-white rounded-circle d-flex align-items-center justify-content-center" 
+                             style="width: 48px; height: 48px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                            <span class="fw-bold">{{ post.DisplayName[0] if post.DisplayName else 'U' }}</span>
+                        </div>
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div>
+                                <strong class="d-block">{{ post.DisplayName }}</strong>
+                                <small class="text-muted">@{{ post.Username }} · {{ post.CreatedAt.strftime('%d/%m/%Y %H:%M') if post.CreatedAt else '' }}</small>
+                            </div>
+                        </div>
+                        <p class="mb-3" style="line-height: 1.5;">{{ post.Content }}</p>
+                        
+                        <!-- Post Fotoğrafı (varsa) -->
+                        {% if post.ImageUrl %}
+                        <div class="mb-3">
+                            <img src="{{ post.ImageUrl }}" class="img-fluid rounded" alt="Post image" style="max-height: 400px; width: 100%; object-fit: cover;">
+                        </div>
+                        {% endif %}
+                        
+                        <!-- Etkileşim Butonları -->
+                        <div class="d-flex gap-4 border-top pt-2">
+                            <button class="btn btn-sm btn-light like-btn" data-post-id="{{ post.PostId }}">
+                                <i class="bi bi-heart"></i> <span class="like-count">{{ post.LikeCount if post.LikeCount else 0 }}</span>
+                            </button>
+                            <button class="btn btn-sm btn-light" data-bs-toggle="collapse" data-bs-target="#comments-{{ post.PostId }}">
+                                <i class="bi bi-chat"></i> {{ post.CommentCount if post.CommentCount else 0 }}
+                            </button>
+                        </div>
+                        
+                        <!-- Yorum Alanı -->
+                        <div class="collapse mt-3" id="comments-{{ post.PostId }}">
+                            <div class="border-top pt-3">
+                                <!-- Yorumları Listele -->
+                                <div class="comments-list mb-3" id="comments-list-{{ post.PostId }}">
+                                    <div class="text-center text-muted py-2">
+                                        <small>Yorumları yüklemek için tıklayın...</small>
+                                    </div>
+                                </div>
+                                
+                                <!-- Yorum Ekleme Formu -->
+                                <form action="{{ url_for('add_comment') }}" method="POST" class="d-flex gap-2">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <input type="hidden" name="post_id" value="{{ post.PostId }}">
+                                    <input type="text" name="content" class="form-control form-control-sm" placeholder="Yorum yaz..." required>
+                                    <button type="submit" class="btn btn-primary btn-sm">
+                                        <i class="bi bi-send"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="text-center py-5 text-muted">
+            <i class="bi bi-inbox" style="font-size: 4rem;"></i>
+            <p class="mt-3">Henüz post yok. İlk postu sen paylaş!</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

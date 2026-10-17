@@ -1,0 +1,48 @@
+{% extends "layout.html" %}
+{% block title %}Giriş Yap - MicroBlog{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-5">
+        <div class="card shadow">
+            <div class="card-body p-5">
+                <div class="text-center mb-4">
+                    <i class="bi bi-chat-square-text text-primary" style="font-size: 3rem;"></i>
+                    <h2 class="mt-2">MicroBlog</h2>
+                    <p class="text-muted">Hesabına giriş yap</p>
+                </div>
+                
+                <form method="POST">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <div class="mb-3">
+                        <label class="form-label">Kullanıcı Adı</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-person"></i></span>
+                            <input type="text" name="username" class="form-control" placeholder="kullanici_adi" required>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label class="form-label">Şifre</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                            <input type="password" name="password" class="form-control" placeholder="••••••••" required>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary w-100 py-2">
+                        <i class="bi bi-box-arrow-in-right"></i> Giriş Yap
+                    </button>
+                </form>
+                
+                <hr class="my-4">
+                
+                <p class="text-center mb-0">
+                    Hesabın yok mu? 
+                    <a href="{{ url_for('register') }}" class="text-decoration-none">Kayıt Ol</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
